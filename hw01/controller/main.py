@@ -9,7 +9,7 @@ if __name__ == '__main__':
     q_start_index = 0
     e = 0.5
 
-    print('if run all recommended TF-IDF weighting schemes(y/n)')
+    print('If run all recommended TF-IDF weighting schemes(y/n)')
     all_c = raw_input('(y/n): ')
 
     if (all_c == 'n'):
@@ -32,6 +32,11 @@ if __name__ == '__main__':
         print('(5.) (e + (1 - e) * (tf(i,q)/maxq(tf(i,q))))')
         q_tf_c = int(raw_input('q_tf_c(1-5): '))
         while (q_tf_c > 5 or q_tf_c < 1): q_tf_c = int(raw_input('try q_tf_c(1-5): '))
+
+        if (d_tf_c == 5 or q_tf_c == 5):
+            print('Input parameter e')
+            e = int(raw_input("d_tf_c's e(0-1): "))
+            while (e > 1 or e < 0): e = int(raw_input("e(0-1): "))
 
         #document idf
         print('3. Choose idf(i,j) method')

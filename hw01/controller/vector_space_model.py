@@ -92,7 +92,6 @@ def calDocumantRank(pd, pq, po, d_start_index, q_start_index, d_tf_c, q_tf_c, d_
             if count == 0:
                 log_q_n[word] = 0
             else:
-
                 log_q_n[word] = math.log(float(N - count) / count, 10)
 
     '''
@@ -119,10 +118,10 @@ def calDocumantRank(pd, pq, po, d_start_index, q_start_index, d_tf_c, q_tf_c, d_
         q_temp = {}
         for (word, count) in q.items():
             idf = 0
-            if (word not in log_d_n):
+            if (word not in log_q_n):
                 idf = 0  # !!
             else:
-                idf = log_d_n[word]
+                idf = log_q_n[word]
             q_temp[word] = count * idf
         q_tf_w[fn] = q_temp
 
