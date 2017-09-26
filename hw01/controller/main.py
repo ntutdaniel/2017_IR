@@ -66,6 +66,7 @@ if __name__ == '__main__':
             for j in range(1,6,1):
                 for k in range(1,6,1):
                     for l in range(1, 6, 1):
+                        print((i-1)*5**3 + (j-1)*5*2 + (k-1)*5**1 + (l-1))
                         vsm.calDocumantRank(pd, pq, po, d_start_index, q_start_index, i, j, k, l, e)
 
     print ('done!')
