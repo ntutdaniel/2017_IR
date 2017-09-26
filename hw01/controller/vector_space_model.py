@@ -5,7 +5,7 @@ import os
 from time import gmtime, strftime
 
 
-def calDocumantRank(pd, pq, po, d_start_index, q_start_index, tf_c, dtw, qtw):
+def calDocumantRank(pd, pq, po, d_start_index, q_start_index, d_tf_c, q_tf_c, d_idf_c, q_idf_c, e):
     # documents
     doc_word_count, folder_word_count, folder_word_count_distinct = ir_f.ReadFolder(pd, d_start_index)
     # ir_f.ReadFolderDebug(po, doc_word_count, folder_word_count, folder_word_count_distinct)
@@ -20,28 +20,81 @@ def calDocumantRank(pd, pq, po, d_start_index, q_start_index, tf_c, dtw, qtw):
 
     q_tf = query_word_count
 
-    # log(N/d_n)
-    log_d_n = {}
-    for (word, count) in d_n.items():
-        log_d_n[word] = math.log(N / count, 10)
-
-    # print(d_n)
-    # print(len(log_d_n))
-
-    #tf(i,j)
+    # tf(i,j)
     for (fn, d) in d_tf.items():
         for (word, count) in d.items():
-            if(tf_c == 1) :d[word] = count
-            elif(tf_c == 2) :d[word] = 1 + math.log(count, 2)
+            if (d_tf_c == 1):
+                if (d[word] > 0):
+                    d[word] = 1
+                else:
+                    d[word] = 0
+            elif (d_tf_c == 2):  # !!
+                d[word] = count
+            elif (d_tf_c == 3):  # !!
+                d[word] = 1 + math.log(count, 2)
+            elif (d_tf_c == 4):
+                d_max = max(list(d.values()))
+                d[word] = (0.5 + 0.5 * float(count / d_max))
+            elif (d_tf_c == 5):
+                d_max = max(list(d.values()))
+                d[word] = (e + (1 - e) * float(count / d_max))
 
     # tf(i,q)
     for (fn, d) in q_tf.items():
         for (word, count) in d.items():
-            if (tf_c == 1):
+            if (q_tf_c == 1):
+                if (d[word] > 0):
+                    d[word] = 1
+                else:
+                    d[word] = 0
+            elif (q_tf_c == 2):  # !!
                 d[word] = count
-            elif (tf_c == 2):
+            elif (q_tf_c == 3):  # !!
                 d[word] = 1 + math.log(count, 2)
-                
+            elif (q_tf_c == 4):
+                d_max = max(list(d.values()))
+                d[word] = (0.5 + 0.5 * float(count / d_max))
+            elif (q_tf_c == 5):
+                d_max = max(list(d.values()))
+                d[word] = (e + (1 - e) * float(count / d_max))
+
+    # idf(i,j)
+    log_d_n = {}
+    for (word, count) in d_n.items():
+        if d_idf_c == 1:
+            log_d_n[word] = 1
+        elif d_idf_c == 2:
+            log_d_n[word] = math.log(float(N / count), 10)
+        elif d_idf_c == 3:
+            log_d_n[word] = math.log(1 + float(N / count), 10)
+        elif d_idf_c == 4:
+            q_max = max(list(d_n.values()))
+            log_d_n[word] = math.log(1 + float(q_max / count), 10)
+        elif d_idf_c == 5:
+            log_d_n[word] = math.log(float(N - count) / count, 10)
+
+    # idf(i,q)
+    log_q_n = {}  # !!equal to log_d_n
+    for (word, count) in d_n.items():
+        if q_idf_c == 1:
+            log_q_n[word] = 1
+        elif q_idf_c == 2:
+            log_q_n[word] = math.log(float(N / count), 10)
+        elif q_idf_c == 3:
+            log_q_n[word] = math.log(1 + float(N / count), 10)
+        elif q_idf_c == 4:
+            if count == 0:
+                log_q_n[word] = 0
+            else:
+                q_max = max(list(d_n.values()))
+                log_q_n[word] = math.log(1 + float(q_max / count), 10)
+        elif q_idf_c == 5:
+            if count == 0:
+                log_q_n[word] = 0
+            else:
+
+                log_q_n[word] = math.log(float(N - count) / count, 10)
+
     '''
     scheme 01 Document Term Weight
     '''
@@ -50,9 +103,7 @@ def calDocumantRank(pd, pq, po, d_start_index, q_start_index, tf_c, dtw, qtw):
     for (fn, d) in d_tf.items():
         d_temp = {}
         for (word, count) in d.items():
-            if(dtw == 1) :d_temp[word] = count * log_d_n[word]
-            elif(dtw == 2) :d_temp[word] = 1 + count
-            elif(dtw == 3): (1 + count) * log_d_n[word]
+            d_temp[word] = count * log_d_n[word]
         d_tf_w[fn] = d_temp
 
     # for(fn, d) in d_tf_w.items():
@@ -66,16 +117,13 @@ def calDocumantRank(pd, pq, po, d_start_index, q_start_index, tf_c, dtw, qtw):
     q_tf_w = {}
     for (fn, q) in q_tf.items():
         q_temp = {}
-        q_max = max(list(q.values()))
         for (word, count) in q.items():
-            idx = 0
+            idf = 0
             if (word not in log_d_n):
-                idx = 0  # !!
+                idf = 0  # !!
             else:
-                idx = log_d_n[word]
-            if(qtw == 1):q_temp[word] = (0.5 + 0.5 * (count / q_max)) * idx
-            elif(qtw == 2):q_temp[word] = math.log(idx ** 10 + 1, 10)
-            elif(qtw == 3): q_temp[word] = (1 + count) * idx
+                idf = log_d_n[word]
+            q_temp[word] = count * idf
         q_tf_w[fn] = q_temp
 
     '''
@@ -130,9 +178,9 @@ def calDocumantRank(pd, pq, po, d_start_index, q_start_index, tf_c, dtw, qtw):
      ouput
     '''
     for q, ds in sim_q.items():
-        #now = strftime("%Y%m%d%H%M%S", gmtime())
+        # now = strftime("%Y%m%d%H%M%S", gmtime())
         temp_p = po + '/query'
-        temp_q = q
+        temp_q = str(d_tf_c) + '_' + str(q_tf_c) + '_' + str(d_idf_c) + '_' + str(q_idf_c) + '_' + q
 
         if (os.path.exists(os.path.join(temp_p, temp_q))):
             os.remove(os.path.join(temp_p, temp_q))
@@ -148,4 +196,5 @@ if __name__ == '__main__':
     pq = '../dataset/Query'
     d_start_index = 3
     q_start_index = 0
-    calDocumantRank(pd, pq, po, d_start_index, q_start_index,2, 1, 1)
+    e = 0.5
+    calDocumantRank(pd, pq, po, d_start_index, q_start_index, 1, 1, 1, 1, e)
