@@ -1,5 +1,7 @@
+# coding: utf-8
 from pip._vendor.distlib.compat import raw_input
 import vector_space_model as vsm
+import ir_file as ir_f
 
 if __name__ == '__main__':
     pd = '../dataset/Document'
@@ -8,6 +10,15 @@ if __name__ == '__main__':
     d_start_index = 3
     q_start_index = 0
     e = 0.5
+
+    '''
+    讀取檔案
+    '''
+    doc_word_count, folder_word_count, folder_word_count_distinct = ir_f.ReadFolder(pd, d_start_index)
+    # ir_f.ReadFolderDebug(po, doc_word_count, folder_word_count, folder_word_count_distinct)
+
+    query_word_count, query_folder_word_count, query_folder_word_count_distinct = ir_f.ReadFolder(pq, q_start_index)
+    # ir_f.ReadFolderDebug(po, doc_word_count, folder_word_count, folder_word_count_distinct)
 
     print('If run all recommended TF-IDF weighting schemes(y/n)')
     all_c = raw_input('(y/n): ')
@@ -23,7 +34,7 @@ if __name__ == '__main__':
         d_tf_c = int(raw_input('d_tf_c(1-5): '))
         while (d_tf_c > 5 or d_tf_c < 1): d_tf_c = int(raw_input('try d_tf_c(1-5): '))
 
-        #query tf
+        # query tf
         print('2. Choose tf(i,q) method')
         print('(1.) {0, 1}')
         print('(2.) tf(i,q)')
@@ -38,7 +49,7 @@ if __name__ == '__main__':
             e = int(raw_input("d_tf_c's e(0-1): "))
             while (e > 1 or e < 0): e = int(raw_input("e(0-1): "))
 
-        #document idf
+        # document idf
         print('3. Choose idf(i,j) method')
         print('(1.) 1')
         print('(2.) log(N/ni)')
@@ -60,13 +71,15 @@ if __name__ == '__main__':
 
         print('processing...')
 
-        vsm.calDocumantRank(pd, pq, po, d_start_index, q_start_index, d_tf_c, q_tf_c, d_idf_c, q_idf_c, e)
+        vsm.calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count, po, d_tf_c, q_tf_c, d_idf_c,
+                            q_idf_c, e)
     else:
         for i in range(1, 6, 1):
-            for j in range(1,6,1):
-                for k in range(1,6,1):
+            for j in range(1, 6, 1):
+                for k in range(1, 6, 1):
                     for l in range(1, 6, 1):
-                        print((i-1)*5**3 + (j-1)*5*2 + (k-1)*5**1 + (l-1))
-                        vsm.calDocumantRank(pd, pq, po, d_start_index, q_start_index, i, j, k, l, e)
+                        print((i - 1) * 5 ** 3 + (j - 1) * 5 * 2 + (k - 1) * 5 ** 1 + (l - 1))
+                        vsm.calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count, po, i, j, k,
+                                            l, e)
 
     print ('done!')

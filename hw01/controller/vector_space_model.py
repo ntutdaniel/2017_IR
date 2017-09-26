@@ -5,13 +5,14 @@ import os
 from time import gmtime, strftime
 
 
-def calDocumantRank(pd, pq, po, d_start_index, q_start_index, d_tf_c, q_tf_c, d_idf_c, q_idf_c, e):
+def calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count, po, d_tf_c, q_tf_c, d_idf_c, q_idf_c,
+                    e):
     # documents
-    doc_word_count, folder_word_count, folder_word_count_distinct = ir_f.ReadFolder(pd, d_start_index)
+    # doc_word_count, folder_word_count, folder_word_count_distinct = ir_f.ReadFolder(pd, d_start_index)
     # ir_f.ReadFolderDebug(po, doc_word_count, folder_word_count, folder_word_count_distinct)
 
     # query
-    query_word_count, query_folder_word_count, query_folder_word_count_distinct = ir_f.ReadFolder(pq, q_start_index)
+    # query_word_count, query_folder_word_count, query_folder_word_count_distinct = ir_f.ReadFolder(pq, q_start_index)
     # ir_f.ReadFolderDebug(po, doc_word_count, folder_word_count, folder_word_count_distinct)
 
     N = len(doc_word_count)
@@ -196,4 +197,12 @@ if __name__ == '__main__':
     d_start_index = 3
     q_start_index = 0
     e = 0.5
-    calDocumantRank(pd, pq, po, d_start_index, q_start_index, 1, 1, 1, 1, e)
+
+    doc_word_count, folder_word_count, folder_word_count_distinct = ir_f.ReadFolder(pd, d_start_index)
+    # ir_f.ReadFolderDebug(po, doc_word_count, folder_word_count, folder_word_count_distinct)
+
+    # query
+    query_word_count, query_folder_word_count, query_folder_word_count_distinct = ir_f.ReadFolder(pq, q_start_index)
+    # ir_f.ReadFolderDebug(po, doc_word_count, folder_word_count, folder_word_count_distinct)
+
+    calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count, po, 1, 1, 1, 1, e)
