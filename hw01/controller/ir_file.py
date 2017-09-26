@@ -1,3 +1,4 @@
+# coding: utf-8
 import os
 
 
@@ -76,7 +77,7 @@ def ReadFolderDebug(po, doc_word_count, folder_word_count, folder_word_count_dis
     for (fn, words) in doc_word_count.items():
         if (os.path.exists(os.path.join(po, fn))):
             os.remove(os.path.join(po, fn))
-        f = open(os.path.join(po, fn), 'xt')
+        f = open(os.path.join(po, fn), 'w')
         for (word, count) in words.items():
             f.writelines(str(word) + ": " + str(count) + '\n')
             print('{:30}{:15}{:3}'.format(fn, word, count))

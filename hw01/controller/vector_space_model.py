@@ -5,7 +5,7 @@ import os
 from time import gmtime, strftime
 
 
-def calDocumantRank(pd, pq, po, d_start_index, q_start_index):
+def calDocumantRank(pd, pq, po, d_start_index, q_start_index, tf_c, dtw, qtw):
     # documents
     doc_word_count, folder_word_count, folder_word_count_distinct = ir_f.ReadFolder(pd, d_start_index)
     # ir_f.ReadFolderDebug(po, doc_word_count, folder_word_count, folder_word_count_distinct)
@@ -20,10 +20,6 @@ def calDocumantRank(pd, pq, po, d_start_index, q_start_index):
 
     q_tf = query_word_count
 
-    '''
-    scheme 01 Document Term Weight
-    '''
-
     # log(N/d_n)
     log_d_n = {}
     for (word, count) in d_n.items():
@@ -32,13 +28,31 @@ def calDocumantRank(pd, pq, po, d_start_index, q_start_index):
     # print(d_n)
     # print(len(log_d_n))
 
+    #tf(i,j)
+    for (fn, d) in d_tf.items():
+        for (word, count) in d.items():
+            if(tf_c == 1) :d[word] = count
+            elif(tf_c == 2) :d[word] = 1 + math.log(count, 2)
 
-    # tf(i,f) documents
+    # tf(i,q)
+    for (fn, d) in q_tf.items():
+        for (word, count) in d.items():
+            if (tf_c == 1):
+                d[word] = count
+            elif (tf_c == 2):
+                d[word] = 1 + math.log(count, 2)
+                
+    '''
+    scheme 01 Document Term Weight
+    '''
+    # documents term weight
     d_tf_w = {}
     for (fn, d) in d_tf.items():
         d_temp = {}
         for (word, count) in d.items():
-            d_temp[word] = (1 + math.log(count, 2)) * log_d_n[word]
+            if(dtw == 1) :d_temp[word] = count * log_d_n[word]
+            elif(dtw == 2) :d_temp[word] = 1 + count
+            elif(dtw == 3): (1 + count) * log_d_n[word]
         d_tf_w[fn] = d_temp
 
     # for(fn, d) in d_tf_w.items():
@@ -59,7 +73,9 @@ def calDocumantRank(pd, pq, po, d_start_index, q_start_index):
                 idx = 0  # !!
             else:
                 idx = log_d_n[word]
-            q_temp[word] = (0.5 + 0.5 * (count / q_max)) * idx
+            if(qtw == 1):q_temp[word] = (0.5 + 0.5 * (count / q_max)) * idx
+            elif(qtw == 2):q_temp[word] = math.log(idx ** 10 + 1, 10)
+            elif(qtw == 3): q_temp[word] = (1 + count) * idx
         q_tf_w[fn] = q_temp
 
     '''
@@ -120,7 +136,7 @@ def calDocumantRank(pd, pq, po, d_start_index, q_start_index):
 
         if (os.path.exists(os.path.join(temp_p, temp_q))):
             os.remove(os.path.join(temp_p, temp_q))
-        f = open(os.path.join(temp_p, temp_q), 'xt')
+        f = open(os.path.join(temp_p, temp_q), 'w')
         for (d, score) in sorted(dict(sim_q[q]).items(), key=lambda x: x[1], reverse=True):
             f.writelines(str(d) + ": " + str(score) + '\n')
         f.close()
@@ -132,4 +148,4 @@ if __name__ == '__main__':
     pq = '../dataset/Query'
     d_start_index = 3
     q_start_index = 0
-    calDocumantRank(pd, pq, po, d_start_index, q_start_index)
+    calDocumantRank(pd, pq, po, d_start_index, q_start_index,2, 1, 1)
