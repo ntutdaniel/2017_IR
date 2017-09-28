@@ -20,11 +20,12 @@ if __name__ == '__main__':
     query_word_count, query_folder_word_count, query_folder_word_count_distinct = ir_f.ReadFolder(pq, q_start_index)
     # ir_f.ReadFolderDebug(po, doc_word_count, folder_word_count, folder_word_count_distinct)
 
+    d_c = len(doc_word_count)
     print('If run all recommended TF-IDF weighting schemes(y/n)')
     all_c = raw_input('(y/n): ')
 
     print('Input each query retrive rank max count')
-    qr_c = int(raw_input('(0-5): '))
+    qr_c = int(raw_input('(0-' + str(d_c) + '): '))
 
     if (all_c == 'n'):
         # document tf
@@ -85,4 +86,4 @@ if __name__ == '__main__':
                         vsm.calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count, po, i, j, k,
                                             l, e, qr_c)
 
-    print ('done!')
+    print('done!')
