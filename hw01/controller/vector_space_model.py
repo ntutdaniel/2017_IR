@@ -210,7 +210,7 @@ def calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count
         temp = sorted(temp)
         temp.insert(0, "Query,RetrievedDocuments\n")
         for a in temp:
-            print(a)
+            #print(a)
             f.writelines(a)
         f.close()
 
