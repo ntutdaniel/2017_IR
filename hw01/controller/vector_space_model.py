@@ -204,13 +204,13 @@ def calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count
             for (d, score) in sorted(dict(sim_q[q]).items(), key=lambda x: x[1], reverse=True)[:qr_c]:
                 temp_q_a += str(d) + ' '
             temp_q_a = temp_q_a.strip()
-            temp_q_a += '\n'
             temp.append(temp_q_a)
 
         temp = sorted(temp)
-        temp.insert(0, "Query,RetrievedDocuments\n")
+        temp.insert(0, "Query,RetrievedDocuments")
         for a in temp:
-            #print(a)
+            # print(a)
+            if temp.index(a) != len(temp) - 1: a += '\n'
             f.writelines(a)
         f.close()
 
