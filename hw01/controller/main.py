@@ -23,6 +23,9 @@ if __name__ == '__main__':
     print('If run all recommended TF-IDF weighting schemes(y/n)')
     all_c = raw_input('(y/n): ')
 
+    print('Input each query retrive rank max count')
+    qr_c = int(raw_input('(0-5): '))
+
     if (all_c == 'n'):
         # document tf
         print('1. Choose tf(i,j) method')
@@ -72,7 +75,7 @@ if __name__ == '__main__':
         print('processing...')
 
         vsm.calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count, po, d_tf_c, q_tf_c, d_idf_c,
-                            q_idf_c, e)
+                            q_idf_c, e, qr_c)
     else:
         for i in range(1, 6, 1):
             for j in range(1, 6, 1):
@@ -80,6 +83,6 @@ if __name__ == '__main__':
                     for l in range(1, 6, 1):
                         print((i - 1) * 5 ** 3 + (j - 1) * 5 ** 2 + (k - 1) * 5 ** 1 + (l - 1))
                         vsm.calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count, po, i, j, k,
-                                            l, e)
+                                            l, e, qr_c)
 
     print ('done!')

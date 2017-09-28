@@ -7,7 +7,7 @@ from time import gmtime, strftime
 
 
 def calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count, po, d_tf_c, q_tf_c, d_idf_c, q_idf_c,
-                    e):
+                    e, qr_c):
     # documents
     # doc_word_count, folder_word_count, folder_word_count_distinct = ir_f.ReadFolder(pd, d_start_index)
     # ir_f.ReadFolderDebug(po, doc_word_count, folder_word_count, folder_word_count_distinct)
@@ -175,19 +175,43 @@ def calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count
     # print(sorted(dict(sim_q['20002.query']).items(), key=lambda x: x[1], reverse=True))
 
 
+    is_hw01 = True
     '''
-     ouput
+     ouput origin(document, ranking)
     '''
-    for q, ds in sim_q.items():
-        # now = strftime("%Y%m%d%H%M%S", gmtime())
-        temp_p = po + '/query'
-        temp_q = str(d_tf_c) + '_' + str(q_tf_c) + '_' + str(d_idf_c) + '_' + str(q_idf_c) + '_' + q
+    if (is_hw01 == False):
+        for q, ds in sim_q.items():
+            # now = strftime("%Y%m%d%H%M%S", gmtime())
+            temp_p = po + '/query'
+            temp_q = str(d_tf_c) + '_' + str(q_tf_c) + '_' + str(d_idf_c) + '_' + str(q_idf_c) + '_' + q
 
-        if (os.path.exists(os.path.join(temp_p, temp_q))):
-            os.remove(os.path.join(temp_p, temp_q))
-        f = open(os.path.join(temp_p, temp_q), 'w')
-        for (d, score) in sorted(dict(sim_q[q]).items(), key=lambda x: x[1], reverse=True):
-            f.writelines(str(d) + ": " + str(score) + '\n')
+            if (os.path.exists(os.path.join(temp_p, temp_q))):
+                os.remove(os.path.join(temp_p, temp_q))
+            f = open(os.path.join(temp_p, temp_q), 'w')
+            for (d, score) in sorted(dict(sim_q[q]).items(), key=lambda x: x[1], reverse=True)[:qr_c]:
+                f.writelines(str(d) + ": " + str(score) + '\n')
+            f.close()
+    else:
+        temp = []
+        # temp.append('Query, RetrievedDocuments')
+        temp_p = po + '/Q_RD'
+        filename = str(d_tf_c) + '_' + str(q_tf_c) + '_' + str(d_idf_c) + '_' + str(q_idf_c) + '_' + 'hw01_answer'
+        if (os.path.exists(os.path.join(temp_p, filename))):
+            os.remove(os.path.join(temp_p, filename))
+        f = open(os.path.join(temp_p, filename), 'w')
+        for q, ds in sim_q.items():
+            temp_q_a = q + ',';
+            for (d, score) in sorted(dict(sim_q[q]).items(), key=lambda x: x[1], reverse=True)[:qr_c]:
+                temp_q_a += str(d) + ' '
+            temp_q_a = temp_q_a.strip()
+            temp_q_a += '\n'
+            temp.append(temp_q_a)
+
+        temp = sorted(temp)
+        temp.insert(0, "Query,RetrievedDocuments\n")
+        for a in temp:
+            print(a)
+            f.writelines(a)
         f.close()
 
 
@@ -198,6 +222,7 @@ if __name__ == '__main__':
     d_start_index = 3
     q_start_index = 0
     e = 0.5
+    qr_c = 5
 
     doc_word_count, folder_word_count, folder_word_count_distinct = ir_f.ReadFolder(pd, d_start_index)
     # ir_f.ReadFolderDebug(po, doc_word_count, folder_word_count, folder_word_count_distinct)
@@ -206,4 +231,4 @@ if __name__ == '__main__':
     query_word_count, query_folder_word_count, query_folder_word_count_distinct = ir_f.ReadFolder(pq, q_start_index)
     # ir_f.ReadFolderDebug(po, doc_word_count, folder_word_count, folder_word_count_distinct)
 
-    calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count, po, 1, 1, 1, 1, e)
+    calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count, po, 1, 1, 1, 1, e, qr_c)
