@@ -175,7 +175,7 @@ def calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count
     # print(sorted(dict(sim_q['20002.query']).items(), key=lambda x: x[1], reverse=True))
 
 
-    is_hw01 = True
+    is_hw01 = False
     '''
      ouput origin(document, ranking)
     '''

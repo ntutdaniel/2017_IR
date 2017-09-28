@@ -84,6 +84,40 @@ def ReadFolderDebug(po, doc_word_count, folder_word_count, folder_word_count_dis
         f.close()
 
 
+
+def ReadEvaFile(path, start_index):
+    ds = []
+
+    for i, line in enumerate(open(path, 'r')):
+        word_list = line.replace('\n', '').replace('-1', '').strip()
+        ws = word_list.split(':')
+        ds.append(ws[0])
+
+    return ds
+
+def ReadEvaFolder(p, start_index):
+    folder = {}
+    files = os.listdir(p)
+    files_name = []
+    folder_word_counter = {}
+    folder_word_counter_distince = {}  # word出現在各個document的次數（如果出現為1）
+
+    for f in files:  # f is file name
+        fullpath = os.path.join(p, f)
+        if os.path.isfile(fullpath):
+            files_name.append(f)
+
+    # read all files in the folder
+    for fn in files_name:
+        fullpath = os.path.join(p, fn)
+        if(fn == '.DS_Store'): continue
+        ds = ReadEvaFile(fullpath, start_index)
+
+        folder[fn] = ds
+        # debug
+        # if debug: ReadFileDebug(document_info, word_counter)
+    return folder
+
 if __name__ == '__main__':
     debug1 = False
     debug2 = False
