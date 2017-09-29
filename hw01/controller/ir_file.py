@@ -6,6 +6,7 @@ import os
 def ReadFile(path, start_index):
     word_counter = {}
     document_info = []
+    document_word_count = 0
 
     for i, line in enumerate(open(path, 'r')):
         word_list = line.replace('\n', '').replace('-1', '').strip()
@@ -15,11 +16,12 @@ def ReadFile(path, start_index):
         else:
             for word in word_list.split():
                 temp = str(word)
+                document_word_count += 1
                 if temp not in word_counter:
                     word_counter[temp] = 1
                 else:
                     word_counter[temp] += 1
-    return document_info, word_counter
+    return document_info, word_counter, document_word_count
 
 
 # debug
@@ -49,7 +51,7 @@ def ReadFolder(p, start_index):
     for fn in files_name:
         fullpath = os.path.join(p, fn)
         if(fn == '.DS_Store'): continue
-        document_info, word_counter = ReadFile(fullpath, start_index)
+        document_info, word_counter, document_word_count = ReadFile(fullpath, start_index)
 
         folder[fn] = word_counter
         # debug
@@ -130,7 +132,7 @@ if __name__ == '__main__':
     start_index = 3
 
     # file
-    document_info, word_counter = ReadFile(p, start_index)
+    document_info, word_counter, document_word_count = ReadFile(p, start_index)
     # debug function
     if debug1: ReadFileDebug(document_info, word_counter)
 

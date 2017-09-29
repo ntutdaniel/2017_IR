@@ -22,9 +22,31 @@ def calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count
 
     q_tf = query_word_count
 
+    d_len = {}
+    # each doc length
+    for (fn, d) in d_tf.items():
+        wc = 0
+        for (word, count) in d.items():
+            wc += count
+        d_len[fn] = wc
+
+    d_avg_len = sum(list(d_len.values())) / float(len(d_len))
+
+    b = 0.9
+    tfp = {}
+    for (fn, d) in d_tf.items():
+        temp = {}
+        for (word, count) in d.items():
+            temp[word] = count / ((1 - b) + (b * len(d)) / d_avg_len)
+        tfp[fn] = temp
+
+    k1 = 10.0
+    k3 = 3.0
+
     # tf(i,j)
     for (fn, d) in d_tf.items():
         for (word, count) in d.items():
+            # print(fn, word, (tfp[fn])[word])
             if (d_tf_c == 1):
                 if (d[word] > 0):
                     d[word] = 1
@@ -40,6 +62,8 @@ def calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count
             elif (d_tf_c == 5):
                 d_max = max(list(d.values()))
                 d[word] = (e + (1 - e) * float(count / d_max))
+            elif (d_tf_c == 6):  # sm25
+                d[word] = (k1 + 1) * (tfp[fn])[word] / (k1 + (tfp[fn])[word])
 
     # tf(i,q)
     for (fn, d) in q_tf.items():
@@ -59,6 +83,8 @@ def calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count
             elif (q_tf_c == 5):
                 d_max = max(list(d.values()))
                 d[word] = (e + (1 - e) * float(count / d_max))
+            elif (q_tf_c == 6):
+                d[word] = (k3 + 1) * count / (k3 + count)
 
     # idf(i,j)
     log_d_n = {}
@@ -74,6 +100,8 @@ def calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count
             log_d_n[word] = math.log(1 + float(q_max / count), 10)
         elif d_idf_c == 5:
             log_d_n[word] = math.log(float(N - count) / count, 10)
+        elif d_idf_c == 6:
+            log_d_n[word] = math.log(float(N - count + 0.5) / count + 0.5, 10)
 
     # idf(i,q)
     log_q_n = {}  # !!equal to log_d_n
@@ -163,7 +191,10 @@ def calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count
             if (sum1 ** 0.5 * sum2 ** 0.5) == 0:
                 sim = 0
             else:
-                sim = sum0 / (sum1 ** 0.5 * sum2 ** 0.5)
+                if d_idf_c == 6 and q_idf_c == 6:
+                    sim = sum0  # sm25
+                else:
+                    sim = sum0 / (sum1 ** 0.5 * sum2 ** 0.5)
             sim_d[fd] = sim
         sorted_sim_d = sorted(sim_d.items(), key=lambda x: x[1], reverse=True)
         sim_q[fq] = sorted_sim_d
@@ -222,7 +253,7 @@ if __name__ == '__main__':
     d_start_index = 3
     q_start_index = 0
     e = 0.5
-    qr_c = 5
+    qr_c = 13
 
     doc_word_count, folder_word_count, folder_word_count_distinct = ir_f.ReadFolder(pd, d_start_index)
     # ir_f.ReadFolderDebug(po, doc_word_count, folder_word_count, folder_word_count_distinct)

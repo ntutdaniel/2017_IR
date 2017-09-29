@@ -35,8 +35,9 @@ if __name__ == '__main__':
         print('(3.) 1 + log2(tf(i,j))')
         print('(4.) (0.5 + 0.5 * (tf(i,j)/maxj(tf(i,j))))')
         print('(5.) (e + (1 - e) * (tf(i,j)/maxj(tf(i,j))))')
-        d_tf_c = int(raw_input('d_tf_c(1-5): '))
-        while (d_tf_c > 5 or d_tf_c < 1): d_tf_c = int(raw_input('try d_tf_c(1-5): '))
+        print('(6.) sm25')
+        d_tf_c = int(raw_input('d_tf_c(1-6): '))
+        while (d_tf_c > 6 or d_tf_c < 1): d_tf_c = int(raw_input('try d_tf_c(1-6): '))
 
         # query tf
         print('2. Choose tf(i,q) method')
@@ -45,8 +46,9 @@ if __name__ == '__main__':
         print('(3.) 1 + log2(tf(i,q))')
         print('(4.) (0.5 + 0.5 * (tf(i,q)/maxq(tf(i,q))))')
         print('(5.) (e + (1 - e) * (tf(i,q)/maxq(tf(i,q))))')
-        q_tf_c = int(raw_input('q_tf_c(1-5): '))
-        while (q_tf_c > 5 or q_tf_c < 1): q_tf_c = int(raw_input('try q_tf_c(1-5): '))
+        print('(6.) sm25')
+        q_tf_c = int(raw_input('q_tf_c(1-6): '))
+        while (q_tf_c > 6 or q_tf_c < 1): q_tf_c = int(raw_input('try q_tf_c(1-6): '))
 
         if (d_tf_c == 5 or q_tf_c == 5):
             print('Input parameter e')
@@ -60,8 +62,9 @@ if __name__ == '__main__':
         print('(3.) log(1 + N/ni)')
         print('(4.) log(1 + maxi(ni)/ni)')
         print('(5.) log((N - ni)/ni)')
+        print('(6.) sm25')
         d_idf_c = int(raw_input('d_idf_c(1-5): '))
-        while (d_idf_c > 3 or d_idf_c < 1): d_idf_c = int(raw_input('try d_idf_c(1-5): '))
+        while (d_idf_c > 6 or d_idf_c < 1): d_idf_c = int(raw_input('try d_idf_c(1-6): '))
 
         # document idf
         print('4. Choose idf(i,q) method')
@@ -71,16 +74,16 @@ if __name__ == '__main__':
         print('(4.) log(1 + maxi(ni)/ni)')
         print('(5.) log((N - ni)/ni)')
         q_idf_c = int(raw_input('q_idf_c(1-5): '))
-        while (q_idf_c > 3 or q_idf_c < 1): q_idf_c = int(raw_input('try q_idf_c(1-5): '))
+        while (q_idf_c > 5 or q_idf_c < 1): q_idf_c = int(raw_input('try q_idf_c(1-5): '))
 
         print('processing...')
 
         vsm.calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count, po, d_tf_c, q_tf_c, d_idf_c,
                             q_idf_c, e, qr_c)
     else:
-        for i in range(1, 6, 1):
-            for j in range(1, 6, 1):
-                for k in range(1, 6, 1):
+        for i in range(1, 7, 1):
+            for j in range(1, 7, 1):
+                for k in range(1, 7, 1):
                     for l in range(1, 6, 1):
                         print((i - 1) * 5 ** 3 + (j - 1) * 5 ** 2 + (k - 1) * 5 ** 1 + (l - 1))
                         vsm.calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count, po, i, j, k,
