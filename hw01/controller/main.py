@@ -11,6 +11,12 @@ if __name__ == '__main__':
     q_start_index = 0
     e = 0.5
 
+    #2422 -> 2421(10)
+    #2113 -> 2113(10)
+    #2222 -> 2221(10)
+    #6661 -> 6661(10)
+    #5351 -> 5351(10)
+
     '''
     讀取檔案
     '''
@@ -52,8 +58,8 @@ if __name__ == '__main__':
 
         if (d_tf_c == 5 or q_tf_c == 5):
             print('Input parameter e')
-            e = int(raw_input("d_tf_c's e(0-1): "))
-            while (e > 1 or e < 0): e = int(raw_input("e(0-1): "))
+            e = float(raw_input("d_tf_c's e(0-1): "))
+            while (e > 1 or e < 0): e = float(raw_input("e(0-1): "))
 
         # document idf
         print('3. Choose idf(i,j) method')
