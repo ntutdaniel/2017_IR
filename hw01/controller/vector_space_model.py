@@ -65,6 +65,10 @@ def calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count
             elif (d_tf_c == 6):  # sm25
                 d[word] = (k1 + 1) * (tfp[fn])[word] / (k1 + (tfp[fn])[word])
 
+    # for (fn, d) in d_tf.items():
+    #     for (word, count) in d.items():
+    #         print(fn, word, count)
+
     # tf(i,q)
     for (fn, d) in q_tf.items():
         for (word, count) in d.items():
@@ -89,6 +93,7 @@ def calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count
     # idf(i,j)
     log_d_n = {}
     for (word, count) in d_n.items():
+        #print(word, count)
         if d_idf_c == 1:
             log_d_n[word] = 1
         elif d_idf_c == 2:
@@ -102,6 +107,9 @@ def calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count
             log_d_n[word] = math.log(float(N - count) / count, 10)
         elif d_idf_c == 6:
             log_d_n[word] = math.log(float(N - count + 0.5) / count + 0.5, 10)
+
+    # for (word, count) in log_d_n.items():
+    #     print(word, count)
 
     # idf(i,q)
     log_q_n = {}  # !!equal to log_d_n
@@ -136,9 +144,8 @@ def calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count
         d_tf_w[fn] = d_temp
 
     # for(fn, d) in d_tf_w.items():
-    #     d_temp = {}
     #     for (word, count) in d.items():
-    #         print(fn, word, d_tf[fn][word], log_d_n[word], count)
+    #         print(fn, word, count)
 
     '''
     scheme 01 Query Term Weight
@@ -154,6 +161,10 @@ def calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count
                 idf = log_q_n[word]
             q_temp[word] = count * idf
         q_tf_w[fn] = q_temp
+
+    # for(fn, d) in q_tf_w.items():
+    #     for (word, count) in d.items():
+    #         print(fn, word, count)
 
     '''
      scheme 01 Document Term Weight x Query Term Weight
