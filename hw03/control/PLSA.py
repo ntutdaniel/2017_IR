@@ -105,6 +105,7 @@ def GetWiTk(k, i):
             else:
                 den += LogAdd(den, math.log(collection[j][i_index]) + math.log(p_kwd[k][j][i_index]))
     div = num - den
+    print('p(wi|tk)' + str(div))
     return div
 
 
@@ -121,9 +122,8 @@ def GetTkDj(k, j):
         else:
             num += LogAdd(num, math.log(collection[j][i]) + math.log(p_kwd[k][j][i]))
             den += LogAdd(num, math.log(collection[j][i]))
-
-        print(i, num, den)
     div = num - den
+    print('p(tk|dj)' + str(div))
     return div
 
 
@@ -141,8 +141,19 @@ def RunM():
 
 
 if __name__ == '__main__':
+    po_wk = '../dataset/Output/p_init_wk.txt'
+    po_kd = '../dataset/Output/p_init_kd.txt'
+    np.savetxt(po_wk, p_wk, delimiter=',')
+    np.savetxt(po_kd, p_kd, delimiter=',')
+
+    '''
+    EM
+    '''
     RunE()
     RunM()
-    print(p_wk)
-    print(p_kd)
+
+    po_wk = '../dataset/Output/p_plsa_wk.txt'
+    po_kd = '../dataset/Output/p_plsa_kd.txt'
+    np.savetxt(po_wk, p_wk, delimiter=',')
+    np.savetxt(po_kd, p_kd, delimiter=',')
 
