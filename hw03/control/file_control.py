@@ -92,7 +92,7 @@ def ReadBGLMFile(path):
     for i, line in enumerate(open(path, 'r')):
         word_list = line.replace('\n', '').strip()
         ws = word_list.split()
-        dict[str(ws[0])] = float(ws[1])
+        dict[int(ws[0])] = float(ws[1])
 
     return dict
 
@@ -107,7 +107,7 @@ def ReadCollectionFile(path):
         # print(ws)
         words_dict = {}
         for word in ws:
-            temp = str(word)
+            temp = int(word)
             if temp not in words_dict:
                 words_dict[temp] = 1
             else:
