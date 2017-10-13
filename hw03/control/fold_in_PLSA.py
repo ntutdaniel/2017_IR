@@ -8,7 +8,7 @@ po = '../dataset/Output'
 pq = '../dataset/Query'
 pbglm = '../dataset/BGLM.txt'
 start_index = 3
-tk = 5  # Tk
+tk = 3  # Tk
 
 '''
 read file (BGLM.txt & Collection.txt)
