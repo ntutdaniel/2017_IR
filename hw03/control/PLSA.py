@@ -38,28 +38,50 @@ d2
 # matrix (tk | wi, dj)
 p_kwd = np.zeros(shape=(tk, dc_count, v_count))
 
+'''
+tool function
+'''
+
+
+def isNanAndInf(n):
+    if np.isnan(n) or np.isinf(n):
+        return True
+    else:
+        return False
+
 
 def LogAdd(x, y):
-    e = math.exp(1)
-    lzero = -1.0E10  # ~=log(0)
-    lsmall = -0.5E10  # log values < LSMALL are set to LZERO
-    minLogExp = -1 * math.log(-1 * lzero, e)
+    lzero = -1.0e10  # ~=log(0)
+    lsmall = -0.5e10  # log values < LSMALL are set to LZERO
+    minLogExp = -1 * math.log(-1 * lzero)
+    add = 0
 
-    if x < y:
-        temp = x
-        x = y
-        y = temp
-
-    diff = y - x
-
-    if diff < minLogExp:
-        if x < lsmall:
-            return lzero
-        else:
-            return x
+    # if x < y:
+    #     temp = x
+    #     x = y
+    #     y = temp
+    #
+    # diff = y - x #diff < 0
+    # print(x,y,diff,np.isinf(diff),x < lsmall)
+    #
+    # if diff < minLogExp or np.isinf(diff):
+    #     if x < lsmall:
+    #         return lzero
+    #     else:
+    #         return x
+    # else:
+    #     z = math.exp(diff)
+    #     return x + math.log(1.0 + z)
+    if x == 0:
+        add = math.log(y)
+    elif y == 0:
+        add = math.log(x)
+    elif x >= y:
+        add = math.log(x) + math.log(1 + math.exp(math.log(y) - math.log(x)))
     else:
-        z = math.exp(diff)
-        return x + math.log(1.0 + z, e)
+        add = math.log(y) + math.log(1 + math.exp(math.log(x) - math.log(y)))
+
+    return add
 
 
 # test = LogAdd(10, 10)
@@ -71,7 +93,9 @@ def GetPTkWiDj(k, i, j):
     num = math.log(p_wk[i][k]) + math.log(p_kd[k][j])
     den = 0
     for k_index in range(0, tk):
-        den += LogAdd(den, math.log(p_wk[i][k_index]) + math.log(p_kd[k_index][j]))
+        temp = math.log(p_wk[i][k_index]) + math.log(p_kd[k_index][j])
+        temp = math.exp(temp)
+        den = LogAdd(math.exp(den), temp)
     div = num - den
     return div
 
@@ -83,7 +107,9 @@ def RunE():
         for j in range(0, dc_count):
             for i in range(0, v_count):
                 p_kwd[k_index][j][i] = math.exp(GetPTkWiDj(k_index, i, j))
-                print(k_index, i, j, p_kwd[k_index][j][i])
+                # Debug
+                if isNanAndInf(p_kwd[k_index][j][i]):
+                    print('RunE', k_index, i, j, p_kwd[k_index][j][i])
 
 
 def GetWiTk(k, i):
@@ -92,20 +118,25 @@ def GetWiTk(k, i):
 
     num = 0
     for j in range(0, dc_count):
-        if (i not in collection[j]):
-            num += LogAdd(num, 0)
-        else:
-            num += LogAdd(num, math.log(collection[j][i]) + math.log(p_kwd[k][j][i]))
+        if (i in collection[j]):
+            temp = math.log(collection[j][i]) + math.log(p_kwd[k][j][i])
+            temp = math.exp(temp)
+            num = LogAdd(math.exp(num), temp)
+            #print(j, num)
 
     den = 0
     for i_index in range(0, v_count):
         for j in range(0, dc_count):
-            if (i_index not in collection[j]):
-                den += LogAdd(den, 0)
-            else:
-                den += LogAdd(den, math.log(collection[j][i_index]) + math.log(p_kwd[k][j][i_index]))
+            if (i_index in collection[j]):
+                temp = math.log(collection[j][i_index]) + math.log(p_kwd[k][j][i_index])
+                temp = math.exp(temp)
+                den = LogAdd(math.exp(den), temp)
+                #print(i_index, j, den)
     div = num - den
-    print('p(wi|tk)' + str(div))
+
+    # Debug
+    if isNanAndInf(div):
+        print('p(wi|tk)', i, k, str(div))
     return div
 
 
@@ -116,14 +147,16 @@ def GetTkDj(k, j):
     num = 0
     den = 0
     for i in range(0, v_count):
-        if (i not in collection[j]):
-            num += LogAdd(num, 0)
-            den += LogAdd(num, 0)
-        else:
-            num += LogAdd(num, math.log(collection[j][i]) + math.log(p_kwd[k][j][i]))
-            den += LogAdd(num, math.log(collection[j][i]))
+        if (i in collection[j]):
+            temp = math.log(collection[j][i]) + math.log(p_kwd[k][j][i])
+            temp = math.exp(temp)
+            num = LogAdd(math.exp(num), temp)
+            den += collection[j][i]
+    den = math.log(den)
     div = num - den
-    print('p(tk|dj)' + str(div))
+    # Debug
+    if isNanAndInf(div):
+        print('p(tk|dj)', k, j, str(div))
     return div
 
 
@@ -156,4 +189,3 @@ if __name__ == '__main__':
     po_kd = '../dataset/Output/p_plsa_kd.txt'
     np.savetxt(po_wk, p_wk, delimiter=',')
     np.savetxt(po_kd, p_kd, delimiter=',')
-
