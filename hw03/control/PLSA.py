@@ -82,7 +82,7 @@ def LogAdd(x, y):
     else:
         add = math.log(y) + math.log(1 + math.exp(math.log(x) - math.log(y)))
 
-    return add  # 回傳原始數值
+    return add
 
 
 # test = LogAdd(10, 10)
