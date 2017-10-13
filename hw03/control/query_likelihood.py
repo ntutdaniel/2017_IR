@@ -9,7 +9,7 @@ po = '../dataset/Output'
 pq = '../dataset/Query'
 pbglm = '../dataset/BGLM.txt'
 start_index = 0
-tk = 2
+tk = 10
 
 '''
 read file
@@ -97,8 +97,8 @@ def CalcQueryRank():
         for i in range(0, len(collection)):
             rank = 0
             for word, count in words.items():
-                rank += GetPPWiDj(word, i)
-            d_ranks[docs_index_list[i]] = rank  # index to doc name
+                rank += math.log(GetPPWiDj(word, i))
+            d_ranks[docs_index_list[i]] = math.exp(rank)  # index to doc name
         q_ranks[fn] = d_ranks
     return q_ranks
 

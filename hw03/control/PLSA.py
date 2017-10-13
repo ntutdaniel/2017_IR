@@ -5,7 +5,7 @@ import math
 pbglm = '../dataset/BGLM.txt'
 pcollection = '../dataset/Collection.txt'
 start_index = 0
-tk = 2  # Tk
+tk = 10  # Tk
 
 '''
 read file (BGLM.txt & Collection.txt)
