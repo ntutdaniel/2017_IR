@@ -15,7 +15,7 @@ def ReadFile(path, start_index):
             document_info.append(word_list)
         else:
             for word in word_list.split():
-                temp = str(word)
+                temp = int(word)
                 document_word_count += 1
                 if temp not in word_counter:
                     word_counter[temp] = 1
