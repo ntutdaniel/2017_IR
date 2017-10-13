@@ -182,7 +182,9 @@ if __name__ == '__main__':
     '''
     EM
     '''
+    print('E processing...')
     RunE()
+    print('M processing...')
     RunM()
 
     po_wk = '../dataset/Output/p_plsa_wk.txt'
