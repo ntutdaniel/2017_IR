@@ -35,6 +35,7 @@ p_kd = p_kd / p_kd_col_sum
 d1
 d2
 '''
+
 # matrix (tk | wi, dj)
 p_kwd = np.zeros(shape=(tk, dc_count, v_count))
 
@@ -81,7 +82,7 @@ def LogAdd(x, y):
     else:
         add = math.log(y) + math.log(1 + math.exp(math.log(x) - math.log(y)))
 
-    return add
+    return add  # 回傳原始數值
 
 
 # test = LogAdd(10, 10)
@@ -92,11 +93,19 @@ def GetPTkWiDj(k, i, j):
 
     num = math.log(p_wk[i][k]) + math.log(p_kd[k][j])
     den = 0
+    # den_test = 0
     for k_index in range(0, tk):
+        if p_wk[i][k_index] == 0 or p_kd[k_index][j] == 0:
+            continue
+
         temp = math.log(p_wk[i][k_index]) + math.log(p_kd[k_index][j])
         temp = math.exp(temp)
+        # den_test += p_wk[i][k_index] * p_kd[k_index][j]
         den = LogAdd(math.exp(den), temp)
-    div = num - den
+    # print(num, math.log(den_test), math.log(den))
+
+    div = num - math.log(den)
+    # print(div)
     return div
 
 
@@ -107,37 +116,75 @@ def RunE():
         for j in range(0, dc_count):
             for i in range(0, v_count):
                 p_kwd[k_index][j][i] = math.exp(GetPTkWiDj(k_index, i, j))
+                # print(math.exp(GetPTkWiDj(0, i, j)),math.exp(GetPTkWiDj(1, i, j)))
                 # Debug
                 if isNanAndInf(p_kwd[k_index][j][i]):
                     print('RunE', k_index, i, j, p_kwd[k_index][j][i])
 
 
-def GetWiTk(k, i):
+def GetWiTk(k, i, den_k):
     global p_wk, p_kd
     global v_count, dc_count
 
     num = 0
+    # num_test = 0
     for j in range(0, dc_count):
         if (i in collection[j]):
+            if p_kwd[k][j][i] == 0:
+                continue
+
             temp = math.log(collection[j][i]) + math.log(p_kwd[k][j][i])
             temp = math.exp(temp)
+            # num_test += collection[j][i] * p_kwd[k][j][i]
             num = LogAdd(math.exp(num), temp)
-            #print(j, num)
+            # print(math.log(num_test),num)
+            # print(j, num)
 
-    den = 0
-    for i_index in range(0, v_count):
-        for j in range(0, dc_count):
-            if (i_index in collection[j]):
-                temp = math.log(collection[j][i_index]) + math.log(p_kwd[k][j][i_index])
-                temp = math.exp(temp)
-                den = LogAdd(math.exp(den), temp)
-                #print(i_index, j, den)
+    den = den_k
+    # den_test = 0
+    # for i_index in range(0, v_count):
+    #     for j in range(0, dc_count):
+    #         if (i_index in collection[j]):
+    #             if p_kwd[k][j][i_index] == 0:
+    #                 continue
+    #
+    #             temp = math.log(collection[j][i_index]) + math.log(p_kwd[k][j][i_index])
+    #             temp = math.exp(temp)
+    #             # den_test += collection[j][i_index] * p_kwd[k][j][i_index]
+    #             den = LogAdd(math.exp(den), temp)
+    #             # print(math.log(den_test),den)
+    #             # print(i_index, j, den)
     div = num - den
-
+    #print(div)
     # Debug
     if isNanAndInf(div):
         print('p(wi|tk)', i, k, str(div))
     return div
+
+
+def GetWiTkDen(k):
+    global p_wk, p_kd, p_kwd
+    global v_count, dc_count
+
+    den = 0
+    # den_test = 0
+    for i_index in range(0, v_count):
+        for j in range(0, dc_count):
+            if (i_index in collection[j]):
+                if p_kwd[k][j][i_index] == 0:
+                    continue
+
+                temp = math.log(collection[j][i_index]) + math.log(p_kwd[k][j][i_index])
+                temp = math.exp(temp)
+                # den_test += collection[j][i_index] * p_kwd[k][j][i_index]
+                den = LogAdd(math.exp(den), temp)
+                # print(math.log(den_test),den)
+        #print(i_index, den)
+
+    # Debug
+    if isNanAndInf(den):
+        print('GetWiTkDen_fun', k, str(den))
+    return den
 
 
 def GetTkDj(k, j):
@@ -148,6 +195,9 @@ def GetTkDj(k, j):
     den = 0
     for i in range(0, v_count):
         if (i in collection[j]):
+            if p_kwd[k][j][i] == 0:
+                continue
+
             temp = math.log(collection[j][i]) + math.log(p_kwd[k][j][i])
             temp = math.exp(temp)
             num = LogAdd(math.exp(num), temp)
@@ -164,9 +214,12 @@ def RunM():
     global tk, v_count, dc_count
     global p_wk, p_kd
 
-    for k in range(0, tk):
-        for i in range(0, v_count):
-            p_wk[i][k] = math.exp(GetWiTk(k, i))
+    for k in range(0, tk):  # tk
+        den_k = GetWiTkDen(k) # k den
+        for i in range(0, v_count):  # v_count
+            p_wk[i][k] = math.exp(GetWiTk(k, i, den_k))
+            # print(p_wk[i][k])
+            # print(p_wk)
 
     for k in range(0, tk):
         for j in range(0, dc_count):
@@ -179,15 +232,23 @@ if __name__ == '__main__':
     np.savetxt(po_wk, p_wk, delimiter=',')
     np.savetxt(po_kd, p_kd, delimiter=',')
 
-    '''
-    EM
-    '''
-    print('E processing...')
-    RunE()
-    print('M processing...')
-    RunM()
+    train_index = 0
+    train_total = 128
 
-    po_wk = '../dataset/Output/p_plsa_wk.txt'
-    po_kd = '../dataset/Output/p_plsa_kd.txt'
-    np.savetxt(po_wk, p_wk, delimiter=',')
-    np.savetxt(po_kd, p_kd, delimiter=',')
+    while train_index < train_total:
+        '''
+        EM
+        '''
+        print('E processing...' + str(train_index) + '/' + str(train_total - 1))
+        RunE()
+        print('M processing...' + str(train_index) + '/' + str(train_total - 1))
+        RunM()
+
+        f_wk = 'p_plsa_wk.txt'
+        f_kd = 'p_plsa_kd.txt'
+        po_wk = '../dataset/Output/' + str(train_index) + '_' + f_wk
+        po_kd = '../dataset/Output/' + str(train_index) + '_' + f_kd
+        np.savetxt(po_wk, p_wk, delimiter=',')
+        np.savetxt(po_kd, p_kd, delimiter=',')
+
+        train_index += 1
