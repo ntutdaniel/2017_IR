@@ -39,6 +39,10 @@ for i, fn in docs_index_list.items():  # 0-2264
 '''
 read matrix(training model) !!!!!!!!!!!!!!!!!!!!!!!!
 '''
+f_wk = 'p_plsa_wk.txt'
+f_kd = 'p_plsa_kd.txt'
+p_wk = []
+p_kd = []
 if len(sys.argv) < 2:
     path_pwk = '../dataset/Output/fold_in_p_init_wk.txt'
     p_wk = np.loadtxt(path_pwk, delimiter=',')

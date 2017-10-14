@@ -15,6 +15,8 @@ read file (BGLM.txt & Collection.txt)
 bglm = file_c.ReadBGLMFile(pbglm)
 # collection(train data) type(dict(collection, dict(word, count)))
 collection = file_c.ReadCollectionFile(pcollection)
+v_count = len(bglm)
+dc_count = len(collection)
 
 '''
 init 2 matrix
@@ -26,12 +28,10 @@ f_kd = 'p_plsa_kd.txt'
 p_wk = []
 p_kd = []
 if len(sys.argv) < 2:
-    v_count = len(bglm)
     p_wk = np.random.randint(1, v_count + 1, size=(v_count, tk))
     p_wk_col_sum = p_wk.sum(axis=0) + 0.
     p_wk = p_wk / p_wk_col_sum
 
-    dc_count = len(collection)
     p_kd = np.random.randint(1, dc_count + 1, size=(tk, dc_count))
     p_kd_col_sum = p_kd.sum(axis=0) + 0.
     p_kd = p_kd / p_kd_col_sum

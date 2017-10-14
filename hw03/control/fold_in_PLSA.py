@@ -57,7 +57,7 @@ if len(sys.argv) < 2:
     p_wk = np.loadtxt(path_pwk, delimiter=',')
 else:
     train_index = sys.argv[1]
-    path_pwk = '../dataset/Output/training/' + 'training' + str(train_index) + '_' + f_wk
+    path_pwk = '../dataset/Output/training/ ' + 'training' + str(train_index) + '_' + f_wk
     p_wk = np.loadtxt(path_pwk, delimiter=',')
 
 
