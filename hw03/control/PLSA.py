@@ -1,6 +1,7 @@
 import file_control as file_c
 import numpy as np
 import math
+import sys
 
 pbglm = '../dataset/BGLM.txt'
 pcollection = '../dataset/Collection.txt'
@@ -19,16 +20,28 @@ collection = file_c.ReadCollectionFile(pcollection)
 init 2 matrix
 '''
 # matrix (word by tk) word's count = 51253
-v_count = len(bglm)
-p_wk = np.random.randint(1, v_count + 1, size=(v_count, tk))
-p_wk_col_sum = p_wk.sum(axis=0) + 0.
-p_wk = p_wk / p_wk_col_sum
-
 # matrix (tk by document) document document's count = 18461
-dc_count = len(collection)
-p_kd = np.random.randint(1, dc_count + 1, size=(tk, dc_count))
-p_kd_col_sum = p_kd.sum(axis=0) + 0.
-p_kd = p_kd / p_kd_col_sum
+f_wk = 'p_plsa_wk.txt'
+f_kd = 'p_plsa_kd.txt'
+p_wk = []
+p_kd = []
+if len(sys.argv) < 2:
+    v_count = len(bglm)
+    p_wk = np.random.randint(1, v_count + 1, size=(v_count, tk))
+    p_wk_col_sum = p_wk.sum(axis=0) + 0.
+    p_wk = p_wk / p_wk_col_sum
+
+    dc_count = len(collection)
+    p_kd = np.random.randint(1, dc_count + 1, size=(tk, dc_count))
+    p_kd_col_sum = p_kd.sum(axis=0) + 0.
+    p_kd = p_kd / p_kd_col_sum
+else:
+    train_index = sys.argv[1]
+    path_pwk = '../dataset/Output/training/' + 'training' + str(train_index) + '_' + f_wk
+    p_wk = np.loadtxt(path_pwk, delimiter=',')
+
+    path_pkd = '../dataset/Output/training/' + 'training' + str(train_index) + '_' + f_kd
+    p_kd = np.loadtxt(path_pkd, delimiter=',')
 
 '''
     v1 v2 

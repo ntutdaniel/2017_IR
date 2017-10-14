@@ -3,6 +3,7 @@ import PLSA as plsa
 import numpy as np
 import math
 import os
+import sys
 
 pd = '../dataset/Document'
 po = '../dataset/Output'
@@ -38,11 +39,19 @@ for i, fn in docs_index_list.items():  # 0-2264
 '''
 read matrix(training model) !!!!!!!!!!!!!!!!!!!!!!!!
 '''
-path_pwk = '../dataset/Output/fold_in_p_init_wk.txt'
-p_wk = np.loadtxt(path_pwk, delimiter=',')
+if len(sys.argv) < 2:
+    path_pwk = '../dataset/Output/fold_in_p_init_wk.txt'
+    p_wk = np.loadtxt(path_pwk, delimiter=',')
 
-path_pkd = '../dataset/Output/fold_in_p_init_kd.txt'
-p_kd = np.loadtxt(path_pkd, delimiter=',')
+    path_pkd = '../dataset/Output/fold_in_p_init_kd.txt'
+    p_kd = np.loadtxt(path_pkd, delimiter=',')
+else:
+    train_index = sys.argv[1]
+    path_pwk = '../dataset/Output/testing/' + 'training' + str(train_index) + '_' + f_wk
+    p_wk = np.loadtxt(path_pwk, delimiter=',')
+
+    path_pkd = '../dataset/Output/testing/' + 'training' + str(train_index) + '_' + f_kd
+    p_kd = np.loadtxt(path_pkd, delimiter=',')
 
 '''
 alpha & betha

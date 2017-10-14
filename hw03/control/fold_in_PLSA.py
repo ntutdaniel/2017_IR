@@ -2,6 +2,7 @@ import file_control as file_c
 import PLSA as plsa
 import numpy as np
 import math
+import sys
 
 pd = '../dataset/Document'
 po = '../dataset/Output'
@@ -47,8 +48,18 @@ p_kwd = np.zeros(shape=(tk, dc_count, v_count))
 '''
 training p(wi|tk) !!!!!!!!!!!!!!!!!!!!!
 '''
-path_pwk = '../dataset/Output/p_init_wk.txt'
-p_wk = np.loadtxt(path_pwk, delimiter=',')
+f_wk = 'p_plsa_wk.txt'
+f_kd = 'p_plsa_kd.txt'
+p_wk = []
+p_kd = []
+if len(sys.argv) < 2:
+    path_pwk = '../dataset/Output/p_init_wk.txt'
+    p_wk = np.loadtxt(path_pwk, delimiter=',')
+else:
+    train_index = sys.argv[1]
+    path_pwk = '../dataset/Output/training/' + 'training' + str(train_index) + '_' + f_wk
+    p_wk = np.loadtxt(path_pwk, delimiter=',')
+
 
 '''
 E Step
