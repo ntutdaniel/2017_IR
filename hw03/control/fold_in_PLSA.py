@@ -158,8 +158,8 @@ if __name__ == '__main__':
 
         f_wk = 'p_plsa_wk.txt'
         f_kd = 'p_plsa_kd.txt'
-        po_wk = '../dataset/Output/testing' + str(train_index) + '_' + f_wk
-        po_kd = '../dataset/Output/testing' + str(train_index) + '_' + f_kd
+        po_wk = '../dataset/Output/testing/testing' + str(train_index) + '_' + f_wk
+        po_kd = '../dataset/Output/testing/testing' + str(train_index) + '_' + f_kd
         np.savetxt(po_wk, p_wk, delimiter=',')
         np.savetxt(po_kd, p_kd, delimiter=',')
 
