@@ -60,10 +60,11 @@ else:
     path_pwk = '../dataset/Output/training/ ' + 'training' + str(train_index) + '_' + f_wk
     p_wk = np.loadtxt(path_pwk, delimiter=',')
 
-
 '''
 E Step
 '''
+
+
 def GetPTkWiDj(k, i, j):
     global p_wk, p_kd
     global tk
@@ -92,15 +93,21 @@ def RunE():
     for k_index in range(0, tk):
         for j in range(0, dc_count):
             for i in range(0, v_count):
-                p_kwd[k_index][j][i] = math.exp(GetPTkWiDj(k_index, i, j))
+                if p_wk[i][k_index] == 0 or p_kd[k_index][j] == 0:
+                    p_kwd[k_index][j][i] = 0
+                else:
+                    p_kwd[k_index][j][i] = math.exp(GetPTkWiDj(k_index, i, j))
                 # print(p_kwd[k_index][j][i])
                 # Debug
                 if plsa.isNanAndInf(p_kwd[k_index][j][i]):
                     print('RunE', k_index, i, j, p_kwd[k_index][j][i])
 
+
 '''
 M Step
 '''
+
+
 def GetTkDj(k, j):
     global p_wk, p_kd
     global v_count, dc_count
@@ -155,6 +162,9 @@ if __name__ == '__main__':
         RunE()
         print('testing M processing...' + str(train_index) + '/' + str(train_total - 1))
         RunM()
+
+        p_wk = plsa.probNorm(p_wk)
+        p_kd = plsa.probNorm(p_kd)
 
         f_wk = 'p_plsa_wk.txt'
         f_kd = 'p_plsa_kd.txt'

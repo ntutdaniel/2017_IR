@@ -43,6 +43,9 @@ else:
     path_pkd = '../dataset/Output/training/' + 'training' + str(train_index) + '_' + f_kd
     p_kd = np.loadtxt(path_pkd, delimiter=',')
 
+def probNorm(matrix):
+    m_s = matrix.sum(axis=0) + 0.
+    return matrix / m_s
 '''
     v1 v2 
 d1
@@ -128,7 +131,10 @@ def RunE():
     for k_index in range(0, tk):
         for j in range(0, dc_count):
             for i in range(0, v_count):
-                p_kwd[k_index][j][i] = math.exp(GetPTkWiDj(k_index, i, j))
+                if p_wk[i][k_index] == 0 or p_kd[k_index][j] == 0:
+                    p_kwd[k_index][j][i] = 0
+                else:
+                    p_kwd[k_index][j][i] = math.exp(GetPTkWiDj(k_index, i, j))
                 # print(math.exp(GetPTkWiDj(0, i, j)),math.exp(GetPTkWiDj(1, i, j)))
                 # Debug
                 if isNanAndInf(p_kwd[k_index][j][i]):
@@ -168,7 +174,7 @@ def GetWiTk(k, i, den_k):
     #             # print(math.log(den_test),den)
     #             # print(i_index, j, den)
     div = num - den
-    #print(div)
+    # print(div)
     # Debug
     if isNanAndInf(div):
         print('p(wi|tk)', i, k, str(div))
@@ -192,7 +198,7 @@ def GetWiTkDen(k):
                 # den_test += collection[j][i_index] * p_kwd[k][j][i_index]
                 den = LogAdd(math.exp(den), temp)
                 # print(math.log(den_test),den)
-        #print(i_index, den)
+                # print(i_index, den)
 
     # Debug
     if isNanAndInf(den):
@@ -228,7 +234,7 @@ def RunM():
     global p_wk, p_kd
 
     for k in range(0, tk):  # tk
-        den_k = GetWiTkDen(k) # k den
+        den_k = GetWiTkDen(k)  # k den
         for i in range(0, v_count):  # v_count
             p_wk[i][k] = math.exp(GetWiTk(k, i, den_k))
             # print(p_wk[i][k])
@@ -256,6 +262,9 @@ if __name__ == '__main__':
         RunE()
         print('M processing...' + str(train_index) + '/' + str(train_total - 1))
         RunM()
+
+        p_wk = probNorm(p_wk)
+        p_kd = probNorm(p_kd)
 
         f_wk = 'p_plsa_wk.txt'
         f_kd = 'p_plsa_kd.txt'
