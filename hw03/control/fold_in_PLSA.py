@@ -10,6 +10,12 @@ pq = '../dataset/Query'
 pbglm = '../dataset/BGLM.txt'
 start_index = 3
 tk = 3  # Tk
+f_wk = 'p_plsa_wk.txt'
+f_kd = 'p_plsa_kd.txt'
+p_wk = []
+p_kd = []
+p_wk_old = []
+p_kd_old = []
 
 '''
 read file (BGLM.txt & Collection.txt)
@@ -43,21 +49,18 @@ p_kd_col_sum = p_kd.sum(axis=0) + 0.
 p_kd = p_kd / p_kd_col_sum
 
 # matrix (tk | wi, dj)
-p_kwd = np.zeros(shape=(tk, dc_count, v_count))
+# p_kwd = np.zeros(shape=(tk, dc_count, v_count))
 
 '''
 training p(wi|tk) !!!!!!!!!!!!!!!!!!!!!
 '''
-f_wk = 'p_plsa_wk.txt'
-f_kd = 'p_plsa_kd.txt'
-p_wk = []
-p_kd = []
+
 if len(sys.argv) < 2:
     path_pwk = '../dataset/Output/p_init_wk.txt'
     p_wk = np.loadtxt(path_pwk, delimiter=',')
 else:
     train_index = sys.argv[1]
-    path_pwk = '../dataset/Output/training/ ' + 'training' + str(train_index) + '_' + f_wk
+    path_pwk = '../dataset/Output/training/' + 'training' + str(train_index) + '_' + f_wk
     p_wk = np.loadtxt(path_pwk, delimiter=',')
 
 '''
@@ -85,6 +88,30 @@ def GetPTkWiDj(k, i, j):
     div = num - math.log(den)
     # print(div)
     return div
+
+
+def GetPTkWiDjV2(k, i, j):
+    global p_wk, p_kd
+    global tk
+
+    num = math.log(p_wk_old[i][k]) + math.log(p_kd_old[k][j])
+
+    den = 0
+    # den_test = 0
+    for k_index in range(0, tk):
+        if p_wk_old[i][k_index] == 0 or p_kd_old[k_index][j] == 0:
+            continue
+
+        # print(i,j,k_index)
+        temp = math.log(p_wk_old[i][k_index]) + math.log(p_kd_old[k_index][j])
+        temp = math.exp(temp)
+        # den_test += p_wk[i][k_index] * p_kd[k_index][j]
+        den = plsa.LogAdd(math.exp(den), temp)
+    # print(num, math.log(den_test), math.log(den))
+
+    div = num - math.log(den)
+    # print(div)
+    return math.exp(div)
 
 
 def RunE():
@@ -117,10 +144,10 @@ def GetTkDj(k, j):
     # num_test = 0
     for i in range(0, v_count):
         if (i in collection[j]):
-            if p_kwd[k][j][i] == 0:
+            if GetPTkWiDjV2(k, i, j) == 0:
                 continue
 
-            temp = math.log(collection[j][i]) + math.log(p_kwd[k][j][i])
+            temp = math.log(collection[j][i]) + math.log(GetPTkWiDjV2(k, i, j))
             temp = math.exp(temp)
             num = plsa.LogAdd(math.exp(num), temp)
             # num_test += collection[j][i] * p_kwd[k][j][i]
@@ -155,11 +182,17 @@ if __name__ == '__main__':
     train_total = 10
 
     while train_index < train_total:
+        p_kd_old = p_kd
+        p_wk_old = p_wk
+        # print(p_kd)
+        # print(p_wk)
+        #print(len(p_kd_old), len(p_kd_old[0]))
+        #print(len(p_wk_old), len(p_wk_old[0]))
         '''
         EM
         '''
-        print('testing E processing...' + str(train_index) + '/' + str(train_total - 1))
-        RunE()
+        # print('testing E processing...' + str(train_index) + '/' + str(train_total - 1))
+        # RunE()
         print('testing M processing...' + str(train_index) + '/' + str(train_total - 1))
         RunM()
 

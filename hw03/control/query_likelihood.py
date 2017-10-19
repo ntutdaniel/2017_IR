@@ -126,7 +126,11 @@ if __name__ == '__main__':
     temp = []
     # temp.append('Query, RetrievedDocuments')
     temp_p = po + '/rank'
-    filename = 'likelihood.txt'
+    filename = ''
+    if len(sys.argv) < 2:
+        filename = 'likelihood.txt'
+    else:
+        filename = str(sys.argv[1]) + '_' + 'likelihood.txt'
     if (os.path.exists(os.path.join(temp_p, filename))):
         os.remove(os.path.join(temp_p, filename))
     f = open(os.path.join(temp_p, filename), 'w')
