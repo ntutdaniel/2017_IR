@@ -10,7 +10,7 @@ po = '../dataset/Output'
 pq = '../dataset/Query'
 pbglm = '../dataset/BGLM.txt'
 start_index = 0
-tk = 3
+tk = 10
 
 '''
 read file
