@@ -135,6 +135,7 @@ if __name__ == '__main__':
         os.remove(os.path.join(temp_p, filename))
     f = open(os.path.join(temp_p, filename), 'w')
     for q, ds in q_ranks.items():
+        #print(sum(ds.values()))
         temp_q_a = q + ',';
         #print(len(sorted(dict(q_ranks[q]).items(), key=lambda x: x[1], reverse=True)))
         for (d, score) in sorted(dict(q_ranks[q]).items(), key=lambda x: x[1], reverse=True):

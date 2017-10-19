@@ -278,7 +278,7 @@ def RunM():
         den_k = GetWiTkDen(k)  # k den
         for i in range(0, v_count):  # v_count
             p_wk[i][k] = math.exp(GetWiTk(k, i, den_k))
-            print(k, i)
+            #print(k, i)
             # print(p_wk[i][k])
             # print(p_wk)
 
