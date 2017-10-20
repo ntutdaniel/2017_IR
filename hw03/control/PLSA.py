@@ -302,8 +302,8 @@ if __name__ == '__main__':
         '''
         EM
         '''
-        p_kd_old = p_kd
-        p_wk_old = p_wk
+        p_kd_old = p_kd[:]
+        p_wk_old = p_wk[:]
         # print(len(p_kd_old),len(p_kd_old[0]))
         # print(len(p_wk_old),len(p_wk_old[0]))
         # print('E processing...' + str(train_index) + '/' + str(train_total - 1))
