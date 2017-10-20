@@ -43,7 +43,7 @@ f_wk = 'p_plsa_wk.txt'
 f_kd = 'p_plsa_kd.txt'
 p_wk = []
 p_kd = []
-if len(sys.argv) < 2:
+if len(sys.argv) < 3:
     path_pwk = '../dataset/Output/fold_in_p_init_wk.txt'
     p_wk = np.loadtxt(path_pwk, delimiter=',')
 
@@ -51,10 +51,11 @@ if len(sys.argv) < 2:
     p_kd = np.loadtxt(path_pkd, delimiter=',')
 else:
     train_index = sys.argv[1]
-    path_pwk = '../dataset/Output/testing/' + 'testing' + str(train_index) + '_' + f_wk
+    test_index = sys.argv[2]
+    path_pwk = '../dataset/Output/testing/' + 'testing_' + str(train_index) + '_' + str(test_index) + '_' + f_wk
     p_wk = np.loadtxt(path_pwk, delimiter=',')
 
-    path_pkd = '../dataset/Output/testing/' + 'testing' + str(train_index) + '_' + f_kd
+    path_pkd = '../dataset/Output/testing/' + 'testing_' + str(train_index) + '_' + str(test_index) + '_' + f_kd
     p_kd = np.loadtxt(path_pkd, delimiter=',')
 
 '''
@@ -115,10 +116,11 @@ def CalcQueryRank():
         q_ranks[fn] = d_ranks
     return q_ranks
 
+
 if __name__ == '__main__':
     q_ranks = CalcQueryRank()
 
-    #debug
+    # debug
     # for q, ds in q_ranks.items():
     #     for d, r in ds.items():
     #         print(q, d, r)
@@ -127,17 +129,17 @@ if __name__ == '__main__':
     # temp.append('Query, RetrievedDocuments')
     temp_p = po + '/rank'
     filename = ''
-    if len(sys.argv) < 2:
+    if len(sys.argv) < 3:
         filename = 'likelihood.txt'
     else:
-        filename = str(sys.argv[1]) + '_' + 'likelihood.txt'
+        filename = str(sys.argv[1]) + '_' + sys.argv[2] + '_' + 'likelihood.txt'
     if (os.path.exists(os.path.join(temp_p, filename))):
         os.remove(os.path.join(temp_p, filename))
     f = open(os.path.join(temp_p, filename), 'w')
     for q, ds in q_ranks.items():
-        #print(sum(ds.values()))
+        # print(sum(ds.values()))
         temp_q_a = q + ',';
-        #print(len(sorted(dict(q_ranks[q]).items(), key=lambda x: x[1], reverse=True)))
+        # print(len(sorted(dict(q_ranks[q]).items(), key=lambda x: x[1], reverse=True)))
         for (d, score) in sorted(dict(q_ranks[q]).items(), key=lambda x: x[1], reverse=True):
             temp_q_a += str(d) + ' '
         temp_q_a = temp_q_a.strip()
@@ -150,4 +152,3 @@ if __name__ == '__main__':
         if temp.index(a) != len(temp) - 1: a += '\n'
         f.writelines(a)
     f.close()
-

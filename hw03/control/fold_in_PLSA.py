@@ -178,33 +178,39 @@ if __name__ == '__main__':
     np.savetxt(po_wk, p_wk, delimiter=',')
     np.savetxt(po_kd, p_kd, delimiter=',')
 
-    train_index = 0
-    train_total = 10
+    test_index = 0
+    test_total = 10
 
-    while train_index < train_total:
+    while test_index < test_total:
         p_kd_old = p_kd[:]
         p_wk_old = p_wk[:]
 
         # print(p_kd)
         # print(p_wk)
-        #print(len(p_kd_old), len(p_kd_old[0]))
-        #print(len(p_wk_old), len(p_wk_old[0]))
+        # print(len(p_kd_old), len(p_kd_old[0]))
+        # print(len(p_wk_old), len(p_wk_old[0]))
         '''
         EM
         '''
-        # print('testing E processing...' + str(train_index) + '/' + str(train_total - 1))
+        # print('testing E processing...' + str(test_index) + '/' + str(test_total - 1))
         # RunE()
-        print('testing M processing...' + str(train_index) + '/' + str(train_total - 1))
+        print('testing M processing...' + str(test_index) + '/' + str(test_total - 1))
         RunM()
 
         p_wk = plsa.probNorm(p_wk)
         p_kd = plsa.probNorm(p_kd)
 
+        f_index = 999
+        if len(sys.argv) < 2:
+            f_index = f_index
+        else:
+            f_index = sys.argv[1]
+
         f_wk = 'p_plsa_wk.txt'
         f_kd = 'p_plsa_kd.txt'
-        po_wk = '../dataset/Output/testing/testing' + str(train_index) + '_' + f_wk
-        po_kd = '../dataset/Output/testing/testing' + str(train_index) + '_' + f_kd
+        po_wk = '../dataset/Output/testing/testing_' + str(f_index) + '_' + str(test_index) + '_' + f_wk
+        po_kd = '../dataset/Output/testing/testing_' + str(f_index) + '_' + str(test_index) + '_' + f_kd
         np.savetxt(po_wk, p_wk, delimiter=',')
         np.savetxt(po_kd, p_kd, delimiter=',')
 
-        train_index += 1
+        test_index += 1
