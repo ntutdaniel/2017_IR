@@ -296,7 +296,7 @@ if __name__ == '__main__':
     init()
 
     train_index = 0
-    train_total = 30
+    train_total = 50
 
     while train_index < train_total:
         '''

@@ -184,6 +184,7 @@ if __name__ == '__main__':
     while train_index < train_total:
         p_kd_old = p_kd[:]
         p_wk_old = p_wk[:]
+
         # print(p_kd)
         # print(p_wk)
         #print(len(p_kd_old), len(p_kd_old[0]))
