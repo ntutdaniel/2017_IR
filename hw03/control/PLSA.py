@@ -17,10 +17,11 @@ bglm = {}
 collection = {}
 v_count = 0
 dc_count = 0
+train_index = 0
 
 
 def init():
-    global p_wk, p_kd, bglm, collection, v_count, dc_count
+    global p_wk, p_kd, bglm, collection, v_count, dc_count, train_index
     '''
     read file (BGLM.txt & Collection.txt)
     '''
@@ -294,14 +295,13 @@ if __name__ == '__main__':
     np.savetxt(po_kd, p_kd, delimiter=',')
 
     init()
-
-    train_index = 0
-    train_total = 50
+    train_total = 200
 
     while train_index < train_total:
         '''
         EM
         '''
+        #print(train_index)
         p_kd_old = p_kd[:]
         p_wk_old = p_wk[:]
         # print(len(p_kd_old),len(p_kd_old[0]))

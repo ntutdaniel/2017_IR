@@ -39,6 +39,7 @@ for i, fn in docs_index_list.items():  # 0-2264
 '''
 read matrix(training model) !!!!!!!!!!!!!!!!!!!!!!!!
 '''
+
 f_wk = 'p_plsa_wk.txt'
 f_kd = 'p_plsa_kd.txt'
 p_wk = []
