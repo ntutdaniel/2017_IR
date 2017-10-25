@@ -297,7 +297,8 @@ if __name__ == '__main__':
     init()
     train_total = 200
 
-    while train_index < train_total:
+    #print(int(train_index), train_total)
+    while int(train_index) < train_total:
         '''
         EM
         '''
