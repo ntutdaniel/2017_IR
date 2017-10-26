@@ -295,10 +295,11 @@ if __name__ == '__main__':
     np.savetxt(po_kd, p_kd, delimiter=',')
 
     init()
+    train_index = int(train_index)
     train_total = 200
 
     #print(int(train_index), train_total)
-    while int(train_index) < train_total:
+    while train_index < train_total:
         '''
         EM
         '''
