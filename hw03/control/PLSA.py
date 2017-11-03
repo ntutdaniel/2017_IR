@@ -2,11 +2,12 @@ import file_control as file_c
 import numpy as np
 import math
 import sys
+import time
 
 pbglm = '../dataset/BGLM.txt'
 pcollection = '../dataset/Collection.txt'
 start_index = 0
-tk = 10  # Tk
+tk = 3  # Tk
 f_wk = 'p_plsa_wk.txt'
 f_kd = 'p_plsa_kd.txt'
 p_wk = []
@@ -187,7 +188,7 @@ def GetWiTk(k, i, den_k):
     # num_test = 0
     for j in range(0, dc_count):
         if (i in collection[j]):
-            if GetPTkWiDjV2(k, i, j) == 0:
+            if GetPTkWiDjV2(k, i, j) == 0 or collection[j][i] == 0:
                 continue
 
             # temp = math.log(collection[j][i]) + math.log(p_kwd[k][j][i])
@@ -220,27 +221,51 @@ def GetWiTk(k, i, den_k):
     return div
 
 
+def checkWordInAllD(i):
+    for d, ws in collection.items():
+        if i in ws: return True
+    return False
+
+
 def GetWiTkDen(k):
     global p_wk, p_kd  # , p_kwd
     global v_count, dc_count
 
     den = 0
+    '''
+    origin
+    '''
     # den_test = 0
-    for i_index in range(0, v_count):
-        for j in range(0, dc_count):
+    # for i_index in range(0, v_count):
+    #     for j in range(0, dc_count):
+    #         if (i_index in collection[j]):
+    #             # if p_kwd[k][j][i_index] == 0:
+    #             #     continue
+    #             if GetPTkWiDjV2(k, i_index, j) == 0:
+    #                 continue
+    #
+    #             # temp = math.log(collection[j][i_index]) + math.log(p_kwd[k][j][i_index])
+    #             temp = math.log(collection[j][i_index]) + math.log(GetPTkWiDjV2(k, i_index, j))
+    #             temp = math.exp(temp)
+    #             # den_test += collection[j][i_index] * p_kwd[k][j][i_index]
+    #             den = LogAdd(math.exp(den), temp)
+    #             # print(math.log(den_test),den)
+    #             # print(i_index, den)
+
+    '''
+    test
+    '''
+    for j in range(0, dc_count):
+        # print(collection[j].keys())
+        for i_index in collection[j].keys():
+            # print(j,i_index)
             if (i_index in collection[j]):
-                # if p_kwd[k][j][i_index] == 0:
-                #     continue
                 if GetPTkWiDjV2(k, i_index, j) == 0:
                     continue
 
-                # temp = math.log(collection[j][i_index]) + math.log(p_kwd[k][j][i_index])
                 temp = math.log(collection[j][i_index]) + math.log(GetPTkWiDjV2(k, i_index, j))
                 temp = math.exp(temp)
-                # den_test += collection[j][i_index] * p_kwd[k][j][i_index]
                 den = LogAdd(math.exp(den), temp)
-                # print(math.log(den_test),den)
-                # print(i_index, den)
 
     # Debug
     if isNanAndInf(den):
@@ -254,15 +279,32 @@ def GetTkDj(k, j):
 
     num = 0
     den = 0
-    for i in range(0, v_count):
+    '''
+    origin
+    '''
+    # for i in range(0, v_count):
+    #     if (i in collection[j]):
+    #         if GetPTkWiDjV2(k, i, j) == 0:
+    #             continue
+    #
+    #         temp = math.log(collection[j][i]) + math.log(GetPTkWiDjV2(k, i, j))
+    #         temp = math.exp(temp)
+    #         num = LogAdd(math.exp(num), temp)
+    #         den += collection[j][i]
+
+    '''
+    test
+    '''
+    for i in collection[j].keys():
         if (i in collection[j]):
-            if GetPTkWiDjV2(k, i, j) == 0:
+            if GetPTkWiDjV2(k, i, j) == 0 or collection[j][i] == 0:
                 continue
 
             temp = math.log(collection[j][i]) + math.log(GetPTkWiDjV2(k, i, j))
             temp = math.exp(temp)
             num = LogAdd(math.exp(num), temp)
             den += collection[j][i]
+
     den = math.log(den)
     div = num - den
     # Debug
@@ -274,18 +316,33 @@ def GetTkDj(k, j):
 def RunM():
     global tk, v_count, dc_count
     global p_wk, p_kd
-    #print(v_count,dc_count)
-    for k in range(0, tk):  # tk
-        den_k = GetWiTkDen(k)  # k den
-        for i in range(0, v_count):  # v_count
-            p_wk[i][k] = math.exp(GetWiTk(k, i, den_k))
+    # print(v_count,dc_count)
+    for k in xrange(0, tk):  # tk
+        # den_k = GetWiTkDen(k)  # k den
+        # print(k)
+        # print('step 01 den done!!')
+        b_t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        for i in xrange(0, v_count):  # v_count
+            if checkWordInAllD(i):
+                p_wk[i][k] = math.exp(GetWiTk(k, i, 0))
+            else:
+                p_wk[i][k] = 0
+            #
             #print(k, i)
             # print(p_wk[i][k])
             # print(p_wk)
+        p_wk[:, k] = p_wk[:, k] / (p_wk[:, k].sum(axis=0) + 0.)
+        a_t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        print(p_wk[:, k].sum(axis=0), b_t, a_t)
+    print('step 01 done!!')
 
-    for k in range(0, tk):
-        for j in range(0, dc_count):
+    for k in xrange(0, tk):
+        b_t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        for j in xrange(0, dc_count):
             p_kd[k][j] = math.exp(GetTkDj(k, j))
+        a_t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        print(p_kd[:, k].sum(axis=0), b_t, a_t)
+    print('step 02 done!!')
 
 
 if __name__ == '__main__':
@@ -298,18 +355,21 @@ if __name__ == '__main__':
     train_index = int(train_index)
     train_total = 200
 
-    #print(int(train_index), train_total)
+    # print(int(train_index), train_total)
     while train_index < train_total:
         '''
         EM
         '''
-        #print(train_index)
+        # print(train_index)
         p_kd_old = p_kd[:]
         p_wk_old = p_wk[:]
         # print(len(p_kd_old),len(p_kd_old[0]))
         # print(len(p_wk_old),len(p_wk_old[0]))
         # print('E processing...' + str(train_index) + '/' + str(train_total - 1))
         # RunE()
+        # print(p_wk[:,0])
+        # p_wk[:, 0] = p_wk[:, 0] / 2
+        # print(p_wk[:, 0])
         print('M processing...' + str(train_index) + '/' + str(train_total - 1))
         RunM()
 

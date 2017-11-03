@@ -308,9 +308,9 @@ if __name__ == '__main__':
     qr_c = 100
     is_hw01 = True
 
-    R_c = 10
-    A = 0.6
-    B = 0.4
+    R_c = 2
+    A = 0.5
+    B = 0.5
 
     doc_word_count, folder_word_count, folder_word_count_distinct = ir_f.ReadFolder(pd, d_start_index)
     # ir_f.ReadFolderDebug(po, doc_word_count, folder_word_count, folder_word_count_distinct)
@@ -331,8 +331,8 @@ if __name__ == '__main__':
     #d_w_c_d1 = copy.deepcopy(folder_word_count_distinct)
     d_w_c_d2 = copy.deepcopy(folder_word_count_distinct)
 
-    sim_q = calDocumantRank(d_w_c, d_w_c_d, q_w_c, po, 2, 3, 1, 4, e, qr_c)
+    sim_q = calDocumantRank(d_w_c, d_w_c_d, q_w_c, po, 1, 2, 1, 4, e, qr_c)
     q_ro = Rocchio(sim_q,q_w_c1,d_w_c1,R_c,A,B)
-    sim_q = calDocumantRank(d_w_c2, d_w_c_d2, q_ro, po, 2, 3, 1, 4, e, qr_c)
-    outputfile(sim_q, is_hw01, po, 2, 3, 1, 4, qr_c)
+    sim_q = calDocumantRank(d_w_c2, d_w_c_d2, q_ro, po, 1, 2, 1, 4, e, qr_c)
+    outputfile(sim_q, is_hw01, po, 1, 2, 1, 4, qr_c)
 
