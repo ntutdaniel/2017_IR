@@ -322,6 +322,8 @@ def RunM():
         # print(k)
         # print('step 01 den done!!')
         b_t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+        #print(map(GetWiTk, k,range(0,v_count),0))
         for i in xrange(0, v_count):  # v_count
             if checkWordInAllD(i):
                 p_wk[i][k] = math.exp(GetWiTk(k, i, 0))

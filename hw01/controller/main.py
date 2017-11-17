@@ -4,9 +4,9 @@ import vector_space_model as vsm
 import ir_file as ir_f
 
 if __name__ == '__main__':
-    pd = '../dataset/Document'
+    pd = '../dataset/Document_hw5'
     po = '../dataset/Output'
-    pq = '../dataset/Query'
+    pq = '../dataset/Query_hw5'
     d_start_index = 3
     q_start_index = 0
     e = 0.5
