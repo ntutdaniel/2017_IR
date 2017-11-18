@@ -83,9 +83,10 @@ cbow.compile(loss='categorical_crossentropy', optimizer='adadelta')
 
 
 def outputEmbeddingWeight(cbow, i):
+    p = '../dataset/Output/embeddingModel/'
     fn = 'embeding_' + str(datetime.now()) + '_' + str(i)
     fn = fn.replace("-", "").replace(" ", "").replace(":", "").replace(".", "")
-    f = open(fn, 'w')
+    f = open(os.path.join(p,fn), 'w')
     # f.write(' '.join([str(V-1), str(dim)]))
     # f.write('\n')
 
@@ -96,7 +97,7 @@ def outputEmbeddingWeight(cbow, i):
     f.close()
 
 
-for ite in range(9999999):
+for ite in range(999999999):
     loss = 0.
     for x, y in generate_data(corpus, window_size, V):
         loss += cbow.train_on_batch(x, y)
