@@ -170,14 +170,18 @@ def calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count
     '''
      scheme 01 Document Term Weight x Query Term Weight
     '''
-    #read embeding
-    #path_pwk = '../dataset/embeding.txt'
-    #p_wk = np.loadtxt(path_pwk, delimiter=',')
+    # read embeding
+    path_pwk = '../dataset/embeding_20171118063138421765'
+    embeding = np.loadtxt(path_pwk, delimiter=',')
+    # print(len(embeding),len(embeding[0]))
+    # print(embeding[0])
+    # print(embeding[0][0])
+    # print(type(embeding[0][0]))
 
-    #sim
-    dim = 10
-    temp_array = np.random.randint(10, size=(1, dim))
-    temp_array2 = np.random.randint(10, size=(1, dim))
+    # sim
+    dim = 100
+    # temp_array = np.random.randint(10, size=(1, dim))
+    # temp_array2 = np.random.randint(10, size=(1, dim))
     sim_q = {}
     for (fq, q) in q_tf_w.items():
         q_len = len(q.values())
@@ -185,7 +189,8 @@ def calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count
         # query vector
         q_vector = np.zeros(dim)
         for word, count in q.items():
-            q_vector = q_vector + (float(count) / q_len) * temp_array  # temp_array
+            q_vector = q_vector + (float(count) / q_len) * embeding[int(word)]  # temp_array
+            # print(q_vector)
 
         # document vec
         sim_d = {}
@@ -193,12 +198,25 @@ def calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count
             d_vector = np.zeros(dim)
             d_len = len(d.values())
             for word, count in d.items():
-                d_vector = d_vector + (float(count) / d_len) * temp_array2  # temp_array
+                d_vector = d_vector + (float(count) / d_len) * embeding[int(word)]  # temp_array
 
             # cos doc and query !!index
-            cos_num = sum(q_vector[0] * d_vector[0])
-            cos_den = sum(q_vector[0] ** 2) ** (0.5) * sum(d_vector[0] ** 2) ** (0.5)
-            cos = cos_num / cos_den
+            cos_num = sum(q_vector * d_vector)
+            cos_den = sum(q_vector ** 2) ** (0.5) * sum(d_vector ** 2) ** (0.5)
+            cos = 0
+
+            if cos_num == 0:
+                cos = 0
+            elif cos_den == 0:
+                cos = -0.5E10
+            else:
+                cos = math.log(abs(cos_num)) - math.log(abs(cos_den))
+                cos = math.exp(cos)
+                if np.sign(cos_num) * np.sign(cos_den) == 1:
+                    cos = cos * 1
+                else:
+                    cos = cos * -1
+
             sim_d[fd] = cos
 
         sorted_sim_d = sorted(sim_d.items(), key=lambda x: x[1], reverse=True)
