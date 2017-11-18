@@ -21,7 +21,7 @@ import os
 # corpus = [sentence.replace('\n', '').replace('-1', '').strip().split() for sentence in corpus if sentence.count(' ') >= 2]
 
 file_names = []
-folder_path = './hw05_dataset/Document_hw5'
+folder_path = '../dataset/Document_hw5'
 files = os.listdir(folder_path)
 
 for f in files:
