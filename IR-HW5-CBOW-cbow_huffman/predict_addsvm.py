@@ -23,7 +23,7 @@ def readfile():
     # read document , create dictionary
     for doc_id in DOC_NAME:
         doc_dict = {}
-        with open("Document\\" + doc_id) as doc_file:
+        with open("Document/" + doc_id) as doc_file:
             doc_file_content = doc_file.read()
             doc_voc = re.split(' |\n', doc_file_content)
             doc_voc = list(filter('-1'.__ne__, doc_voc))
@@ -50,7 +50,7 @@ def readfile():
 
     for query_id in QUERY_NAME:
         query_dict = {}
-        with open("Query\\" + query_id) as query_file:
+        with open("Query/" + query_id) as query_file:
             query_file_content = query_file.read()
             query_voc = re.split(' |\n', query_file_content)
             query_voc = list(filter('-1'.__ne__, query_voc))
@@ -205,7 +205,7 @@ old_vsm()
 sudo_relevant = ans_read('VSM5.txt')
 
 # tf-idf + cbow embedding + pseudo relevant doc
-for cbow_id in range(240,241):
+for cbow_id in range(120,121,10):
     RANK = []
     EMBEDDING = np.loadtxt('./embedding/cbowADG_dict' + str(cbow_id) + '.txt', delimiter=',')
     VSMcos()

@@ -171,7 +171,7 @@ def calDocumantRank(doc_word_count, folder_word_count_distinct, query_word_count
      scheme 01 Document Term Weight x Query Term Weight
     '''
     # read embeding
-    path_pwk = '../dataset/Output/embeddingModel/embeding_20171118210556814173_42'
+    path_pwk = '../dataset/Output/embeddingModel/cbow.txt'
     embeding = np.loadtxt(path_pwk, delimiter=',')
     # print(len(embeding),len(embeding[0]))
     # print(embeding[0])

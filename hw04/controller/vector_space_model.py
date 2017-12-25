@@ -289,23 +289,14 @@ def Rocchio(sim_q, query_word_count,doc_word_count,R,A,B):
         q_pl[q] = q_temp
     return q_pl
 
-
-
-
-
-
-
-
-
-
 if __name__ == '__main__':
-    pd = '../dataset/Document'
+    pd = '../dataset/Document_final'
     po = '../dataset/Output'
-    pq = '../dataset/Query'
+    pq = '../dataset/TestQuery_final'
     d_start_index = 3
     q_start_index = 0
-    e = 0.5
-    qr_c = 100
+    e = 0.3
+    qr_c = 200
     is_hw01 = True
 
     R_c = 2
@@ -331,8 +322,8 @@ if __name__ == '__main__':
     #d_w_c_d1 = copy.deepcopy(folder_word_count_distinct)
     d_w_c_d2 = copy.deepcopy(folder_word_count_distinct)
 
-    sim_q = calDocumantRank(d_w_c, d_w_c_d, q_w_c, po, 1, 2, 1, 4, e, qr_c)
+    sim_q = calDocumantRank(d_w_c, d_w_c_d, q_w_c, po, 6, 6, 6, 3, e, qr_c)
     q_ro = Rocchio(sim_q,q_w_c1,d_w_c1,R_c,A,B)
-    sim_q = calDocumantRank(d_w_c2, d_w_c_d2, q_ro, po, 1, 2, 1, 4, e, qr_c)
-    outputfile(sim_q, is_hw01, po, 1, 2, 1, 4, qr_c)
+    sim_q = calDocumantRank(d_w_c2, d_w_c_d2, q_ro, po, 6, 6, 6, 3, e, qr_c)
+    outputfile(sim_q, is_hw01, po, 6, 6, 6, 3, qr_c)
 
