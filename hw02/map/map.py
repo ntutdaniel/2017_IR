@@ -34,8 +34,8 @@ def mapFun(submission, solution, start_index):
 
 if __name__ == '__main__':
     debug1 = True
-    sub_path = '../data/submission.txt'
-    sol_path = '../data/solution.txt'
+    sub_path = '../data/2_3_1_4_hw01_answer'
+    sol_path = '../data/solution_HW2.txt'
     start_index = 1  # !!
     score = mapFun(sub_path, sol_path, start_index)
     print("The MAP score is %.6f" % score)
